@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100vh;
+      background-image: linear-gradient(180deg, rgb(99, 70, 70), rgb(80, 80, 46));
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      width: 80%;
+      height: 80%;
+      border-radius: 28px;
+      background-image: url('https://images6.alphacoders.com/420/thumb-1920-420222.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .head {
+      margin: 8rem 0 2rem;
+    }
+
+    .head>span {
+      font-size: 36px;
+      font-weight: bolder;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+    .personInfo {
+      background-image: linear-gradient(180deg, rgba(80, 80, 46, 0.5), rgb(99, 70, 70));
+      padding: 1rem 2rem;
+      border-radius: 18px;
+    }
+
+    .roomName,
+    .userName {
+      display: flex;
+      flex-direction: column;
+      margin: 0.75rem 0;
+    }
+
+    label {
+      margin: 5px 0;
+      font-size: 17.5px;
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      color: #fff;
+    }
+
+    input[type=text] {
+      padding: 10px 13px;
+      width: 250px;
+      border-radius: 8px;
+      border: 0;
+    }
+
+    input:focus {
+      outline: 2px solid rgb(18, 120, 167);
+    }
+
+    .btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+
+    .btn>input {
+      font-size: 17px;
+      padding: 8px 30px;
+      cursor: pointer;
+      border: 0;
+      border-radius: 16px;
+    }
+
+    .btn>input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="head">
+      <span>Sahil's Chat Application</span>
+    </div>
+    <div class="personInfo">
+      <form id="post-form" method="POST" action="checkview">
+        {% csrf_token %}
+        <div class="roomName">
+          <label for="room_name">Venue</label>
+          <input type="text" name="room_name" id="room_name">
+        </div>
+        <div class="userName">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username">
+        </div>
+        <div class="btn">
+          <input type="submit" value="Daxil ol">
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

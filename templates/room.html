@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://kit.fontawesome.com/ba035c055c.js" crossorigin="anonymous"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .display {
+      scroll-behavior: smooth;
+    }
+
+    .display::-webkit-scrollbar {
+      background: none;
+      width: 7px;
+      height: 10px;
+    }
+
+    .display::-webkit-scrollbar-thumb {
+      border-radius: 5px;
+      background-color: #6abb6e;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100vh;
+      background-image: linear-gradient(180deg, rgb(99, 70, 70), rgb(80, 80, 46));
+    }
+
+    .allContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      width: 80%;
+      height: 80%;
+      border-radius: 28px;
+      background-image: url('https://images6.alphacoders.com/590/thumb-1920-590137.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .allContainer h2{
+      font-size: 32px;
+      font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+
+    .miniContainer {
+      width: 30%;
+      background-image: linear-gradient(180deg, rgba(80, 80, 46, 0.5), rgb(99, 70, 70));
+      margin: 0.75rem 0 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display {
+      width: 100%;
+      padding: 0 5px 0 0;
+      height: 20rem;
+      overflow-y: auto;
+    }
+
+    .disSpan {
+      font-size: 20px;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .disP {
+      margin: 8px 0 3px 0;
+      font-family: sans-serif;
+    }
+
+    .container {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    }
+
+    .container-send {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      width: 100%;
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    #post-form {
+      width: 100%;
+      margin: 0 !important;
+    }
+
+    #post-form textarea {
+      padding: 10px 15px;
+      font-size: 17px;
+      border: 0;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      resize: none;
+    }
+
+    #post-form textarea:focus {
+      outline: none;
+    }
+
+    .sendDiv {
+      display: flex;
+      align-items: end;
+      width: 100%;
+    }
+
+    .sendDiv button {
+      height: 40px;
+      width: 55px;
+      cursor: pointer;
+      margin: 0 0 0 5px;
+      border: 0;
+      border-radius: 100%;
+      background-color: #45a049;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .sendDiv i {
+      color: #fff;
+      font-size: 20px;
+    }
+
+    .darker {
+      background-color: #ddd;
+      width: 100%;
+    }
+
+    .time-left{
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .container::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    input[type=text],
+          select {
+            width: 100%;
+            height: 50px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+          }
+
+          div {
+            border-radius: 5px;
+            padding: 20px;
+          }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <div class="allContainer">
+    <h2>Room: {{room}} </h2>
+
+    <div class="miniContainer">
+
+      <div class="display" id="display"></div>
+
+      <div class="container-send">
+        <form id="post-form">
+          {% csrf_token %}
+          <input type="hidden" name="username" id="username" value="{{username}}" />
+          <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}" />
+          <div class="sendDiv">
+            <textarea name="message" id="message" cols="30" rows="1"></textarea>
+            <button onclick="scrollBottom()"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+
+
+<script>
+  $(document).ready(function () {
+
+    function formatDate(timestamp) {
+      const date = new Date(timestamp);
+      date.setHours(date.getHours() - 4);
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone: 'Asia/Baku'
+      };
+      return date.toLocaleDateString(undefined, options);
+    }
+
+    setInterval(function () {
+      $.ajax({
+        type: 'GET',
+        url: "/getMessages/{{room}}/",
+        success: function (response) {
+          $("#display").empty();
+          for (var key in response.messages) {
+            var formattedDate = formatDate(response.messages[key].date);
+            var temp = "<div class='container darker'><b>" + `<span class='disSpan'>${response.messages[key].user} <i class="fa-solid fa-user"></i></span>` + "</b>" + `<p class = 'disP'>  ${response.messages[key].value} </p>` + "<span class='time-left'>" + formattedDate + "</span></div>";
+            $("#display").append(temp);
+          }
+        },
+        error: function (response) {
+        }
+      });
+    }, 0);
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).on('submit', '#post-form', function (e) {
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: '/send',
+      data: {
+        username: $('#username').val(),
+        room_id: $('#room_id').val(),
+        message: $('#message').val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function (data) {
+      }
+    });
+    document.getElementById('message').value = ''
+  });
+</script>
+
+<script>
+  let display = document.querySelector('.display');
+  function scrollBottom() {
+    setTimeout(() => {
+      display.scrollTop = display.scrollHeight;
+    }, "100");
+  }
+</script>
+</body>
+</html>
